@@ -1,5 +1,7 @@
 from train_w2v import *
 import argparse
+from translate import *
+import googletrans
 
 def _parse_args():
     parser = argparse.ArgumentParser(description='driver.py')
@@ -9,10 +11,13 @@ def _parse_args():
     args = parser.parse_args()
     return args
 
+LANG_TO_CODE = googletrans.LANGCODES
+
 if __name__ == '__main__':
     args = _parse_args()
     model_path = f"data/embeddings/{args.lang}.model"
     text = read_file(args.topic, args.lang)
+    trans = asyncio.run(translate_text(text, LANG_TO_CODE[lang]))
     tokens = tokenize(text, args.lang)
     vecs = word_2_vec(tokens, model_path, args.fresh)
 
