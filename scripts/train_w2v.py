@@ -32,8 +32,7 @@ def tokenize(text, lang):
 
     tokens = [stemmer.stem(word) for word in tokens if \
             (word not in stop_words \
-            and word not in string.punctuation \
-            and token_counter[word] > 2)]
+            and word not in string.punctuation)]
     return tokens
 
 def word_2_vec(tokens, path, fresh=False):

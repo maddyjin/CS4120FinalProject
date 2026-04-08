@@ -17,8 +17,9 @@ if __name__ == '__main__':
     args = _parse_args()
     model_path = f"data/embeddings/{args.lang}.model"
     text = read_file(args.topic, args.lang)
-    trans = asyncio.run(translate_text(text, LANG_TO_CODE[lang]))
-    tokens = tokenize(text, args.lang)
+    trans = asyncio.run(translate_text(text[:100], LANG_TO_CODE[lang]))
+    print("Translation", trans)
+    tokens = tokenize(trans, args.lang)
     vecs = word_2_vec(tokens, model_path, args.fresh)
 
     print(vecs.index_to_key)
