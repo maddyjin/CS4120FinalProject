@@ -45,15 +45,15 @@ def tokenize(text, lang):
     tokens = word_tokenize(text)
     tokens = pos_tag(tokens, tagset='universal')
     
-    for i, pair in enumerate(tokens):
-        word, tag = pair
+    lemmas = []
+    for word, tag in tokens:
         if word not in stop_words and word not in string.punctuation:
             pos = get_wordnet_pos(tag)
             if pos:
-                tokens[i] = lemma.lemmatize(word, pos=pos).lower()
+                lemmas.append(lemma.lemmatize(word, pos=pos).lower())
             else:
-                tokens[i] = lemma.lemmatize(word).lower()
-    return tokens
+                lemmas.append(lemma.lemmatize(word).lower())
+    return lemmas
 
 def word_2_vec(tokens, path, vs=128, context=5):
     print('Inititalizing new model...')
