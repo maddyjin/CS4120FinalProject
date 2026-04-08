@@ -35,19 +35,10 @@ def tokenize(text, lang):
             and word not in string.punctuation)]
     return tokens
 
-def word_2_vec(tokens, path, fresh=False):
-    # look at path for existing embeddins
-    # if they exist, load them
-    try:
-        if fresh:
-            raise FreshException()
-        
-        model = Word2Vec.load(path)
-        model.train([tokens], epochs=1, total_words=len(tokens))
-    except (FileNotFoundError, FreshException):
-        print('Inititalizing new model...')
-        model = Word2Vec(sentences=[tokens], vector_size=100, window=5, min_count=1, workers=4)
+def word_2_vec(tokens, path, size=128, context=5):
+    print('Inititalizing new model...')
+    model = Word2Vec(sentences=[tokens], vector_size=size, window=context, min_count=1, workers=4)
 
-    # rewrite to path  
+    # write to path  
     model.save(path)
     return model.wv
