@@ -20,6 +20,6 @@ if __name__ == '__main__':
     trans = asyncio.run(translate_text(text[:100], LANG_TO_CODE[lang]))
     print("Translation", trans)
     tokens = tokenize(trans, args.lang)
-    vecs = word_2_vec(tokens, model_path, args.fresh)
+    vecs = word_2_vec(tokens, model_path, vs=128, context=5)
 
     print(vecs.index_to_key)
