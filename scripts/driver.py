@@ -9,9 +9,7 @@ def _parse_args():
     args = parser.parse_args()
     return args
 
-
-
-def main():
+if __name__ == '__main__':
     args = _parse_args()
     model_path = f"data/embeddings/{args.lang}.model"
     text = read_file(args.topic, args.lang)
@@ -19,6 +17,3 @@ def main():
     vecs = word_2_vec(tokens, model_path, args.fresh)
 
     print(vecs.index_to_key)
-
-if __name__ == '__main__':
-    main()
