@@ -16,11 +16,26 @@ LANG_TO_CODE = googletrans.LANGCODES
 if __name__ == '__main__':
     args = _parse_args()
     model_path = f"data/embeddings/{args.lang}.model"
+
+
     text = read_file(args.topic, args.lang)
+
+    full_translation = ''
     # use chunks of 1000
-    trans = asyncio.run(translate_text(text[:1000], LANG_TO_CODE[args.lang]))
-    print("Translation", trans)
-    tokens = tokenize(trans, args.lang)
+    while len(text) > 0:
+
+        proposal = text[:1000]
+        if len(proposal) == 1000:
+            last_space = proposal.rfind(' ')
+            proposal = proposal[:last_space]
+
+        trans = asyncio.run(translate_text(proposal, LANG_TO_CODE[args.lang]))
+        full_translation += trans
+        text = text[len(proposal):]
+        print('Chars remaining:', len(text))
+
+    tokens = tokenize(full_translation)
     vecs = word_2_vec(tokens, model_path, vs=128, context=5)
 
-    print(vecs.index_to_key)
+    print('First 10 keys:', vecs.index_to_key[:10])
+    print('Most similar to "lgbt":\n',vecs.most_similar('lgbt'))

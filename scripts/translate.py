@@ -16,7 +16,9 @@ txt
 sample = txt[:500]
 
 async def translate_text(sample, src):
-    print('>', sample)
+    # print('>', sample)
+    if src == 'en':
+        return sample
     async with Translator() as translator:
         result = await translator.translate(sample, src=src, dest='en')
         if result.text == sample:

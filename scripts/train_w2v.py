@@ -1,5 +1,5 @@
 from gensim.models import Word2Vec
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize
 from collections import Counter
 from nltk.corpus import stopwords
 import string
@@ -38,26 +38,34 @@ def get_wordnet_pos(tag):
         return None
     
 
-def tokenize(text, lang):
+def tokenize(text):
     lemma = wnl()
-    stop_words = set(stopwords.words(lang))
+    stop_words = set(stopwords.words('english'))
 
-    tokens = word_tokenize(text)
-    tokens = pos_tag(tokens, tagset='universal')
+    sentences = sent_tokenize(text)
     
     lemmas = []
-    for word, tag in tokens:
-        if word not in stop_words and word not in string.punctuation:
-            pos = get_wordnet_pos(tag)
-            if pos:
-                lemmas.append(lemma.lemmatize(word, pos=pos).lower())
-            else:
-                lemmas.append(lemma.lemmatize(word).lower())
+    for sentence in sentences:
+
+        tokens = word_tokenize(sentence)
+        tokens = pos_tag(tokens, tagset='universal')
+        
+        sentence_lemmas = []
+        for word, tag in tokens:
+            if word not in stop_words and word not in string.punctuation:
+                pos = get_wordnet_pos(tag)
+                if pos:
+                    sentence_lemmas.append(lemma.lemmatize(word, pos=pos).lower())
+                else:
+                    sentence_lemmas.append(lemma.lemmatize(word).lower())
+        
+        lemmas.append(sentence_lemmas)
+        
     return lemmas
 
 def word_2_vec(tokens, path, vs=128, context=5):
-    print('Inititalizing new model...')
-    model = Word2Vec(sentences=[tokens], vector_size=vs, window=context, min_count=1, workers=4)
+    # print('Inititalizing new model...')
+    model = Word2Vec(sentences=tokens, vector_size=vs, window=context, min_count=1, workers=4)
 
     # write to path  
     model.save(path)
