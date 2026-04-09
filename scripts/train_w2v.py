@@ -16,12 +16,24 @@ class FreshException(Exception):
 
 def read_file(topic, language):
     try:
-        path = f"{topic}/{language}_{topic}"
-        with open(f'data/{path}.txt', 'rb') as f:
-            txt = f.read().decode().strip().lower()
+        if topic == 'all':
+            paths = glob(f'data/topics/*/{language}_*.txt', recursive=True)
 
-    except:
-        raise Exception("Please put in a valid topic and language. Make sure you are putting in the full topic name.")
+            if len(paths) == 0:
+                raise Exception(f'No files found for language {language}')
+
+            txt = ''
+            for path in paths:
+                with open(path, 'rb') as f:
+                    txt += f.read().decode().strip().lower()
+
+        else:
+            path = f"{topic}/{language}_{topic}"
+            with open(f'data/topics/{path}.txt', 'rb') as f:
+                txt = f.read().decode().strip().lower()
+
+    except Exception as e:
+        raise Exception(e)
     return txt
 
 
@@ -45,9 +57,11 @@ def tokenize(text):
     sentences = sent_tokenize(text)
     
     lemmas = []
+    words = set()
     for sentence in sentences:
 
         tokens = word_tokenize(sentence)
+        words = words.union(set(tokens))
         tokens = pos_tag(tokens, tagset='universal')
         
         sentence_lemmas = []
@@ -60,7 +74,9 @@ def tokenize(text):
                     sentence_lemmas.append(lemma.lemmatize(word).lower())
         
         lemmas.append(sentence_lemmas)
-        
+
+    flat_lemmas = [item for sublist in lemmas for item in sublist]
+    print(f'Reduced {len(words)} words to {len(set(flat_lemmas))} lemmas.')
     return lemmas
 
 def word_2_vec(tokens, path, vs=128, context=5):

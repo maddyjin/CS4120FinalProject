@@ -22,7 +22,7 @@ async def translate_text(sample, src):
     async with Translator() as translator:
         result = await translator.translate(sample, src=src, dest='en')
         if result.text == sample:
-            raise Exception('Translation failed.')    
+            raise Exception('Translation failed. Try lowering the buffer with "--buffer 1000".')    
         
     return result.text
         
