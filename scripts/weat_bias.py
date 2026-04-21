@@ -5,8 +5,11 @@ from gensim.models import Word2Vec
 
 BASE_EMBEDDINGS_PATH = '../data/embeddings/'
 
-english_model = Word2Vec.load(f'{BASE_EMBEDDINGS_PATH}english_philosophy.model')
-arabic_model = Word2Vec.load(f'{BASE_EMBEDDINGS_PATH}arabic_philosophy.model')
+def model_path(language, topic):
+    return f'{BASE_EMBEDDINGS_PATH}{language}_{topic}.model'
+
+english_model = Word2Vec.load(model_path('english', 'all'))
+arabic_model = Word2Vec.load(model_path('arabic', 'all'))
 #model = Word2Vec.load('../data/embeddings/english_philosophy.model')
 wefe_model_english = WordEmbeddingModel(english_model.wv)
 wefe_model_arabic = WordEmbeddingModel(arabic_model.wv)
@@ -24,8 +27,8 @@ wefe_model_arabic = WordEmbeddingModel(arabic_model.wv)
 )'''
 gender_query_english = Query(
     target_sets=[
-        ['woman'],
-        ['man']
+        ['woman', 'female',],
+        ['man', 'male',]
     ],
     attribute_sets=[
         ['intuition', 'art', 'wisdom', 'feeling', 'believe', 'belief', 'faith'],
