@@ -13,6 +13,21 @@ The goal of this project is to investigate bias in embeddings across a variety o
 
 ---
 
+## Required Libraries
+- numpy
+- pandas
+- nltk
+- gensim
+- scikit-learn
+- matplotlib
+- plotly
+- googletrans
+- wefe
+
+Required Python version: 3.12 or below
+
+---
+
 ## Data
 tbd
 
