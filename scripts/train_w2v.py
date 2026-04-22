@@ -53,6 +53,7 @@ def get_wordnet_pos(tag):
 def tokenize(text):
     lemma = wnl()
     stop_words = set(stopwords.words('english'))
+    stop_words = stop_words - set(["she", "he", "her", "him", "hers", "his"])
 
     sentences = sent_tokenize(text)
     
