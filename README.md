@@ -14,26 +14,30 @@ The goal of this project is to investigate bias in embeddings across a variety o
 ---
 
 ## Required Libraries
-- numpy
-- pandas
-- nltk
-- gensim
-- scikit-learn
-- matplotlib
-- plotly
-- googletrans
-- wefe
+- `numpy`
+- `pandas`
+- `nltk`
+- `gensim`
+- `scikit-learn`
+- `matplotlib`
+- `plotly`
+- `googletrans`
+- `wefe`
 
 Required Python version: 3.12 or below
 
 ---
 
 ## Data
-tbd
+Wikipedia articles.
 
 ---
 
 ## Models & Methods
-tbd
+Run the following code in order to get the embeddings:
+
+`python scripts/driver.py --lang [LANGUAGE] --topic [TOPIC OR ALL] --buffer [NUMBER]`
+
+Run the `measuring_bias.ipynb` and `scripts/weat_bias.py` files for analysis
 
 ---
