@@ -15,28 +15,10 @@ RUSSIAN = 'russian'
 SPANISH = 'spanish'
 LANGUAGES = [ENGLISH, ARABIC, GERMAN, RUSSIAN, SPANISH]
 
-GENDER_QUERY_TARGETS = {
-    ENGLISH: [
-        ['woman', 'female',],
-        ['man', 'male',]
-    ],
-    ARABIC: [
-        ['female'],
-        ['male']
-    ],
-    GERMAN: [
-        ['woman', 'female',],
-        ['man', 'male',]
-    ],
-    RUSSIAN: [
-        ['woman'],
-        ['man']
-    ],
-    SPANISH: [
-        ['woman', 'female',],
-        ['man', 'male',]
-    ],
-}
+GENDER_QUERY_TARGETS = [
+    ['woman', 'female', 'mother', 'daughter'],
+    ['man', 'male', 'father', 'son']
+]
 
 language_models = {
     ENGLISH: Word2Vec.load(model_path(ENGLISH, 'all')),
@@ -69,7 +51,7 @@ def run_query(language, targets, attribute_1, attribute_2):
         ]
     )
     metric = WEAT()
-    result = metric.run_query(query, wefe_models[language], warn_not_found_words=True)
+    result = metric.run_query(query, wefe_models[language], warn_not_found_words=False, lost_vocabulary_threshold=0.9999)
     #print(result)
     return result['result'], result['effect_size'], result['p_value'] if 'p_value' in result else None
 
@@ -77,81 +59,26 @@ def run_gender_query(language, attribute_1, attribute_2):
     '''
     Returns the WEAT score, the size of the effect, and the p-value in a tuple.
     '''
-    return run_query(language, GENDER_QUERY_TARGETS[language], attribute_1, attribute_2)
+    return run_query(language, GENDER_QUERY_TARGETS, attribute_1, attribute_2)
 
 
-RATIONALITY_ATTRIBUTE_SETS = {
-    ENGLISH: [
-        ['intuition', 'art', 'wisdom', 'feeling', 'believe', 'belief', 'faith', 'feel'],
-        ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning', 'think']
-    ],
-    ARABIC: [
-        ['intuition', 'art', 'wisdom', 'feeling', 'believe', 'belief', 'faith', 'feel'],
-        ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning', 'think']
-    ],
-    GERMAN: [
-        ['art', 'wisdom', 'believe', 'belief'],
-        ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning', 'think']
-    ],
-    RUSSIAN: [
-        ['art', 'wisdom', 'feeling', 'believe', 'belief', 'feel'],
-        ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning', 'think']
-    ],
-    SPANISH: [
-        ['intuition', 'art', 'wisdom', 'feeling', 'believe', 'belief', 'faith', 'feel'],
-        ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning', 'think']
-    ],
-}
-
-for language in LANGUAGES:
-    attributes_1, attributes_2 = RATIONALITY_ATTRIBUTE_SETS[language]
-    weat, size, p_value = run_gender_query(language, attributes_1, attributes_2)
-    print(language.upper())
-    print(f'- attribute sets\n   - {attributes_1}\n   - {attributes_2}')
-    print(f'- {language} weat score: {weat}, effect size: {size}, p-value: {p_value}')
+RATIONALITY_ATTRIBUTE_SETS = [
+    ['intuition', 'art', 'wisdom', 'feeling', 'believe', 'belief', 'faith', 'feel'],
+    ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning', 'think', 'philosophy', 'philosopher']
+]
 
 
-'''gender_query = Query(
-    target_sets=[
-        ['woman', 'female', 'feminine', 'girl', 'sister', 'she', 'her', 'hers', 'daughter'],
-        ['man', 'male', 'masculine', 'boy', 'brother', 'he', 'him', 'his', 'son']
-    ],
-    attribute_sets=[
-        ['irrational', 'emotion', 'emotional', 'intuitive', 'feeling'],
-        ['rational', 'logic', 'logical', 'analytical', 'reasoning']
-    ]
-)
-gender_query_english = Query(
-    target_sets=[
-        ['woman', 'female',],
-        ['man', 'male',]
-    ],
-    attribute_sets=[
-        ['intuition', 'art', 'wisdom', 'feeling', 'believe', 'belief', 'faith'],
-        ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning']
-    ]
-)
-gender_query_arabic = Query(
-    target_sets=[
-        ['female'],
-        ['male']
-    ],
-    attribute_sets=[
-        ['intuition', 'art', 'wisdom', 'feeling', 'believe', 'belief', 'faith'],
-        ['logic', 'reason', 'analysis', 'science', 'mathematics', 'intellectual', 'reasoning']
-    ]
-)
+LEADERSHIP_ATTRIBUTE_SETS = [
+    ['home', 'family', 'nurse', 'marriage', 'parent'],
+    ['authority', 'leader', 'leadership', 'president', 'doctor', 'government']
+]
 
-#print(gender_query_english)
 
-metric = WEAT()
-english_result = metric.run_query(gender_query_english, wefe_model_english)
-print(f'english query target sets: {gender_query_english.target_sets}')
-print(f'english query attribute sets: {gender_query_english.attribute_sets}')
-print(f'english weat score: {english_result['result']}, effect size: {english_result['effect_size']}, p-value: {english_result['p_value']}')
-print()
-
-arabic_result = metric.run_query(gender_query_arabic, wefe_model_arabic)
-print(f'arabic query target sets: {gender_query_arabic.target_sets} (the word man did not show up in the embedding)')
-print(f'arabic query attribute sets: {gender_query_arabic.attribute_sets}')
-print(f'arabic weat score: {arabic_result['result']}, effect size: {arabic_result['effect_size']}, p-value: {arabic_result['p_value']}')'''
+for attribute_sets in [RATIONALITY_ATTRIBUTE_SETS, LEADERSHIP_ATTRIBUTE_SETS]:
+    attributes_1, attributes_2 = attribute_sets
+    print('===================')
+    print(f'attribute sets\n- {attributes_1}\n- {attributes_2}')
+    for language in LANGUAGES:
+        weat, size, p_value = run_gender_query(language, attributes_1, attributes_2)
+        print(language.upper())
+        print(f'- {language} weat score: {weat}, effect size: {size}, p-value: {p_value}')
